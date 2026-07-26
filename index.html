@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soul Clash — Realm Duel | Dark Fantasy 2-Player Reflex Game</title>
+<meta name="description" content="Soul Clash: Realm Duel is a fast-paced local 2-player split-screen reflex game. Face off on one phone, collect glowing Soul Orbs, grab Golden Relics, and dodge Cursed Skulls before the timer runs out.">
+<meta property="og:title" content="Soul Clash — Realm Duel">
+<meta property="og:description" content="A Dark Fantasy 2-player split-screen reflex duel, playable on a single phone.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-void: #0a0612;
+    --human-glow: #4ea8ff;
+    --demon-glow: #ff4747;
+    --gold: #ffdd57;
+    --text-light: #f0eaff;
+    --text-dim: #b8adcf;
+    --panel-border: rgba(240, 234, 255, 0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: Georgia, 'DejaVu Serif', 'Liberation Serif', serif;
+    color: var(--text-light);
+    background:
+      radial-gradient(circle at 12% 0%, rgba(78, 168, 255, 0.16), transparent 40%),
+      radial-gradient(circle at 88% 8%, rgba(255, 71, 71, 0.16), transparent 40%),
+      var(--bg-void);
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, .brand {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+  }
+  .eyebrow {
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.9;
+  }
+  .hero h1 {
+    margin-top: 20px;
+    font-size: clamp(3rem, 11vw, 5.5rem);
+    line-height: 1.05;
+    background: linear-gradient(120deg, var(--human-glow) 0%, var(--gold) 50%, var(--demon-glow) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: var(--gold);
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(255, 221, 87, 0.25));
+  }
+  .hero .tagline {
+    margin-top: 18px;
+    font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+    color: var(--text-dim);
+    font-style: italic;
+    max-width: 640px;
+  }
+  .play-btn {
+    margin-top: 44px;
+    display: inline-block;
+    padding: 22px 64px;
+    border-radius: 999px;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    color: var(--bg-void);
+    background: linear-gradient(145deg, var(--gold), #ffb347);
+    box-shadow:
+      0 0 40px rgba(255, 221, 87, 0.45),
+      0 14px 0 rgba(0, 0, 0, 0.35),
+      0 24px 40px rgba(0, 0, 0, 0.5);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .play-btn:hover, .play-btn:focus-visible {
+    transform: translateY(-3px);
+    box-shadow:
+      0 0 55px rgba(255, 221, 87, 0.6),
+      0 17px 0 rgba(0, 0, 0, 0.35),
+      0 28px 46px rgba(0, 0, 0, 0.55);
+  }
+  .play-btn:active {
+    transform: translateY(6px);
+    box-shadow:
+      0 0 30px rgba(255, 221, 87, 0.4),
+      0 4px 0 rgba(0, 0, 0, 0.35),
+      0 10px 20px rgba(0, 0, 0, 0.5);
+  }
+  .play-btn:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 4px;
+  }
+  .realm-hint {
+    margin-top: 18px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    opacity: 0.7;
+  }
+
+  /* ---------- Content sections ---------- */
+  section.panel {
+    padding: 70px 0;
+    border-top: 1px solid var(--panel-border);
+  }
+  .panel-inner {
+    background: linear-gradient(165deg, rgba(23, 12, 40, 0.55), rgba(10, 6, 18, 0.35));
+    border: 1px solid var(--panel-border);
+    border-radius: 24px;
+    padding: 44px clamp(24px, 5vw, 56px);
+  }
+  .section-eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--human-glow);
+  }
+  section.panel:nth-of-type(even) .section-eyebrow { color: var(--demon-glow); }
+
+  h2 {
+    margin-top: 10px;
+    font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+    color: var(--text-light);
+  }
+  .panel p {
+    margin-top: 18px;
+    color: var(--text-dim);
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    max-width: 720px;
+  }
+
+  /* How to Play */
+  .steps {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .steps li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    list-style: none;
+    color: var(--text-dim);
+    font-size: clamp(1rem, 2vw, 1.1rem);
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--bg-void);
+    background: linear-gradient(145deg, var(--human-glow), var(--demon-glow));
+  }
+  .steps strong { color: var(--text-light); }
+
+  /* Features grid */
+  .feature-grid {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    padding: 22px;
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .feature-card .icon { font-size: 1.6rem; }
+  .feature-card h3 {
+    margin-top: 10px;
+    font-size: 1.05rem;
+    color: var(--gold);
+  }
+  .feature-card p {
+    margin-top: 8px;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+  }
+
+  /* Mid-page CTA repeat */
+  .cta-repeat {
+    text-align: center;
+    padding: 90px 24px;
+  }
+  .cta-repeat h2 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+  .cta-repeat .play-btn { margin-top: 30px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--panel-border);
+    padding: 40px 24px 60px;
+    text-align: center;
+  }
+  footer .brand {
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  footer nav {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  footer nav a {
+    color: var(--text-light);
+    opacity: 0.75;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-family: Georgia, serif;
+    transition: opacity 0.15s ease, color 0.15s ease;
+  }
+  footer nav a:hover, footer nav a:focus-visible {
+    opacity: 1;
+    color: var(--gold);
+  }
+  footer .copyright {
+    margin-top: 22px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- GAME TITLE (hero)                                             -->
+  <!-- ============================================================ -->
+  <header class="hero">
+    <p class="eyebrow">A Dark Fantasy Duel</p>
+    <h1>Soul Clash</h1>
+    <p class="tagline">Two realms. One screen. One winner. A real-time 2-player reflex duel you can play anywhere, on a single phone.</p>
+    <a class="play-btn" href="game.html">▶ Play Game</a>
+    <p class="realm-hint">No download, no sign-up — just you, a friend, and one phone.</p>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- ABOUT THE GAME                                                -->
+  <!-- ============================================================ -->
+  <section class="panel">
+    <div class="wrap">
+      <div class="panel-inner">
+        <p class="section-eyebrow">About the Game</p>
+        <h2>A Local Duel, Reimagined</h2>
+        <p>
+          Soul Clash: Realm Duel is a fast-paced, local 2-player reflex game
+          built entirely for a single mobile screen. Lay your phone flat on a
+          table, and the display splits cleanly in half — one side rotated
+          180 degrees so it reads right-side up for whoever is sitting
+          opposite you. No second device, no Wi-Fi, no accounts. Just two
+          players, one screen, and thirty seconds (or however long you
+          choose) of pure reflex combat.
+        </p>
+        <p>
+          One player commands the glowing, gold-trimmed Human Realm; the
+          other channels the fiery Demon Realm. Both realms are filled with
+          drifting Soul Orbs worth points, rare Golden Relics worth a big
+          bonus, and Cursed Skulls that punish a careless tap. Whoever
+          collects the most souls before the timer hits zero claims victory.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- HOW TO PLAY                                                   -->
+  <!-- ============================================================ -->
+  <section class="panel">
+    <div class="wrap">
+      <div class="panel-inner">
+        <p class="section-eyebrow">How to Play</p>
+        <h2>Know Your Realm</h2>
+        <ol class="steps">
+          <li><span class="step-num">1</span><span>Lay your phone flat on a table between two players, and open the game.</span></li>
+          <li><span class="step-num">2</span><span>Pick a round length on the Start Screen, from a quick 10-second sprint to a full 60-second duel.</span></li>
+          <li><span class="step-num">3</span><span><strong>Human Realm</strong> (top half) and <strong>Demon Realm</strong> (bottom half) each get their own half of the screen — tap or swipe glowing Soul Orbs in your half to score.</span></li>
+          <li><span class="step-num">4</span><span>Grab a <strong>Golden Relic</strong> for a big <strong>+10</strong> bonus — but watch out for the <strong>Cursed Skull</strong>, which costs you <strong>-5</strong>.</span></li>
+          <li><span class="step-num">5</span><span>When the timer hits zero, whoever has the most points wins the realm. Tap Play Again for an instant rematch.</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- FEATURES                                                      -->
+  <!-- ============================================================ -->
+  <section class="panel">
+    <div class="wrap">
+      <div class="panel-inner">
+        <p class="section-eyebrow">Features</p>
+        <h2>Built for Real-Time Rivalry</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon">🎮</div>
+            <h3>Local 2-Player Split-Screen</h3>
+            <p>Face off on a single phone — no second device or connection required.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">⏱️</div>
+            <h3>Custom Round Lengths</h3>
+            <p>Choose anywhere from a 10-second sprint to a full 60-second duel.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">💎</div>
+            <h3>Power-Ups &amp; Traps</h3>
+            <p>Golden Relics and Cursed Skulls keep every round unpredictable.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🎵</div>
+            <h3>Dynamic Audio</h3>
+            <p>Synthesized sound effects and soft ambient dark-fantasy music.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🔥</div>
+            <h3>Escalating Difficulty</h3>
+            <p>Orbs spawn faster and move quicker as the clock runs down.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🌑</div>
+            <h3>Dark Fantasy Aesthetic</h3>
+            <p>Glowing souls, moody realms, and a fully original visual style.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Repeat CTA before the footer -->
+  <div class="cta-repeat">
+    <h2>Ready to Duel?</h2>
+    <a class="play-btn" href="game.html">▶ Play Game</a>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FOOTER                                                        -->
+  <!-- ============================================================ -->
+  <footer>
+    <p class="brand">Soul Clash — Realm Duel</p>
+    <nav>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <p class="copyright">&copy; 2026 Soul Clash. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
