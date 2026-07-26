@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://myameen444134-cyber.github.io/sitemap.xml
